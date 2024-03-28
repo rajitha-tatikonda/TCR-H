@@ -159,7 +159,8 @@ gamma_range = np.logspace(-4,2,5)
 
 #Default parameters for SVM model
 parameters= {'C': [1.0], 'gamma': ['scale'], 'kernel':['rbf'], 'class_weight':['balanced']}
-classifier=GridSearchCV(SVC(), parameters, cv=None, scoring=acc_scorer, n_jobs=-1)
+#classifier=GridSearchCV(SVC(), parameters, cv=None, scoring=acc_scorer, n_jobs=-1)
+classifier=GridSearchCV(SVC(probability=True), parameters, cv=None, scoring=acc_scorer, n_jobs=-1)
 
 #Fit the model
 
@@ -178,3 +179,16 @@ calculate_metrics(y_test, predictions)
 # Save the trained model to a file
 pickle.dump(clf, open('svm_uncorrelated.pkl', 'wb'))
 #joblib.dump(svm_model, 'svm_model.pkl')
+
+##SHAP analysis
+# Get feature names
+feature_names = X_train.columns
+ 
+X_importance=X_train_scaled
+ 
+# Create the KernelExplainer
+explainer = shap.KernelExplainer(model=classifier.predict_proba, data=X_importance, link='logit')
+ 
+shap_values = explainer.shap_values(X_test_scaled)
+shap.summary_plot(shap_values, X_test_scaled, feature_names=feature_names, max_display=50, plot_size=[8,12])
+ 
