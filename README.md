@@ -8,7 +8,7 @@ TCR-H is a supervised classification ML model that can be used in four different
 4) **Strict Split**: Peptides and TCRs in test dataset that are not seen in training
 
 # Requirements
-   python >= 3.0.0, numpy, pandas, joblib, matplotlib, scikit-learn
+   python >= 3.0.0, numpy, pandas, joblib, matplotlib, scikit-learn, SHAP
 
 # Features Extraction
 All the features of the TCR CDR3bs and the associated peptide sequences features to be calculated using peptides package in R (Osorio et al., 2015) or in python using [https://github.com/althonos/peptides.py]
