@@ -116,7 +116,8 @@ print("Training... ")
 
 #Default parameters for SVM model
 parameters= {'C': [1.0], 'gamma': ['scale'], 'kernel':['rbf'], 'class_weight':['balanced']}
-classifier=GridSearchCV(SVC(), parameters, cv=None, scoring=roc_scorer, n_jobs=-1)
+#classifier=GridSearchCV(SVC(), parameters, cv=None, scoring=roc_scorer, n_jobs=-1)
+classifier=GridSearchCV(SVC(probability=True), parameters, cv=None, scoring=roc_scorer, n_jobs=-1)
 
 #fit the model
 clf=classifier.fit(X_train_scaled, y_train)
@@ -151,3 +152,16 @@ print("Precision: {:.2f}".format(precision))
 print("Recall: {:.2f}".format(recall))
 print("F1 Score: {:.2f}".format(f1))
 print("Specificity: {:.2f}".format(specificity))
+
+#SHAP analysis
+# Get feature names
+feature_names = X_train.columns
+ 
+X_importance=X_train_scaled
+ 
+# Create the KernelExplainer
+explainer = shap.KernelExplainer(model=classifier.predict_proba, data=X_importance, link='logit')
+ 
+shap_values = explainer.shap_values(X_test_scaled)
+shap.summary_plot(shap_values, X_test_scaled, feature_names=feature_names, max_display=50, plot_size=[8,12])
+ 
